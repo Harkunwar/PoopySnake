@@ -1,4 +1,4 @@
-import init, { World, Direction } from "poopy_snake_wasm";
+import init, { World, Direction, GameStatus } from "poopy_snake_wasm";
 import { random } from "../poopy_snake_wasm/js/random";
 
 const { memory } = await init();
@@ -12,6 +12,7 @@ const gameControlButton = document.querySelector(
   "button#game-control-button",
 ) as HTMLButtonElement;
 const gameStatus = document.getElementById("game-status") as HTMLDivElement;
+const pointsDiv = document.getElementById("points") as HTMLDivElement;
 const canvas = document.querySelector("canvas")!;
 const context = canvas.getContext("2d")!;
 canvas.height = worldWidth * CELL_SIZE;
@@ -91,6 +92,9 @@ function drawSnake() {
 
 function drawReward() {
   const rewardCellIndex = world.get_reward_cell();
+  if (rewardCellIndex === undefined) {
+    return;
+  }
   const column = rewardCellIndex % worldWidth;
   const row = Math.floor(rewardCellIndex / worldWidth);
 
@@ -102,6 +106,7 @@ function drawReward() {
 
 function drawGameStatus() {
   gameStatus.textContent = world.get_game_status_text();
+  pointsDiv.textContent = world.get_points().toString();
 }
 
 function paint() {
@@ -112,6 +117,13 @@ function paint() {
 }
 
 function play() {
+  const status = world.get_game_status();
+
+  if (status === GameStatus.Won || status === GameStatus.Lost) {
+    gameControlButton.textContent = "Replay";
+    return;
+  }
+
   const fps = 10;
   setTimeout(function () {
     context.clearRect(0, 0, canvas?.width ?? 0, canvas?.height ?? 0);
