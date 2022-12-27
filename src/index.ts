@@ -8,10 +8,25 @@ const WORLD_SIZE = WORLD_WIDTH * WORLD_WIDTH;
 const SNAKE_SPAWN_INDEX = random(WORLD_SIZE);
 const world = World.new(WORLD_WIDTH, SNAKE_SPAWN_INDEX);
 const worldWidth = world.get_width();
+const gameControlButton = document.querySelector(
+  "button#game-control-button",
+) as HTMLButtonElement;
+const gameStatus = document.getElementById("game-status") as HTMLDivElement;
 const canvas = document.querySelector("canvas")!;
 const context = canvas.getContext("2d")!;
 canvas.height = worldWidth * CELL_SIZE;
 canvas.width = worldWidth * CELL_SIZE;
+
+gameControlButton.addEventListener("click", function () {
+  const status = world.get_game_status();
+  if (status === undefined) {
+    gameControlButton.textContent = "Playing";
+    world.start_game();
+    play();
+  } else {
+    location.reload();
+  }
+});
 
 document.addEventListener("keydown", function (event) {
   switch (event.code) {
@@ -55,16 +70,23 @@ function drawSnake() {
     snakeLength,
   );
 
-  snakeCells.forEach((cellIndex, index) => {
-    const column = cellIndex % worldWidth;
-    const row = Math.floor(cellIndex / worldWidth);
+  snakeCells
+    .filter((cellIndex, index) => !(index > 0 && cellIndex === snakeCells[0]))
+    .forEach((cellIndex, index) => {
+      const column = cellIndex % worldWidth;
+      const row = Math.floor(cellIndex / worldWidth);
 
-    context.fillStyle = index == 0 ? "#7878db" : "#000000";
+      context.fillStyle = index == 0 ? "#7878db" : "#000000";
 
-    context.beginPath();
-    context.fillRect(column * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-    context.stroke();
-  });
+      context.beginPath();
+      context.fillRect(
+        column * CELL_SIZE,
+        row * CELL_SIZE,
+        CELL_SIZE,
+        CELL_SIZE,
+      );
+      context.stroke();
+    });
 }
 
 function drawReward() {
@@ -78,21 +100,25 @@ function drawReward() {
   context.stroke();
 }
 
+function drawGameStatus() {
+  gameStatus.textContent = world.get_game_status_text();
+}
+
 function paint() {
   drawWorld();
   drawSnake();
   drawReward();
+  drawGameStatus();
 }
 
-function update() {
+function play() {
   const fps = 10;
   setTimeout(function () {
     context.clearRect(0, 0, canvas?.width ?? 0, canvas?.height ?? 0);
     world.step();
     paint();
-    requestAnimationFrame(update);
+    requestAnimationFrame(play);
   }, 1000 / fps);
 }
 
 paint();
-update();
