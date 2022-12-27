@@ -17,11 +17,11 @@ pub enum Direction {
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_namespace = Math)]
-    fn random() -> f32;
+    fn random() -> f64;
 }
 
 fn get_random_in_range(max: usize) -> usize {
-    (random() * (max as f32)) as usize
+    (random() * (max as f64)) as usize
 }
 
 #[derive(Clone, PartialEq, Copy)]
