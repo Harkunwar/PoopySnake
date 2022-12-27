@@ -1,11 +1,10 @@
 import init, { World, Direction, GameStatus } from "poopy_snake_wasm";
-import { random } from "../poopy_snake_wasm/js/random";
 
 const { memory } = await init();
 const CELL_SIZE = 40;
 const WORLD_WIDTH = 8;
 const WORLD_SIZE = WORLD_WIDTH * WORLD_WIDTH;
-const SNAKE_SPAWN_INDEX = random(WORLD_SIZE);
+const SNAKE_SPAWN_INDEX = Date.now() % WORLD_SIZE;
 const world = World.new(WORLD_WIDTH, SNAKE_SPAWN_INDEX);
 const worldWidth = world.get_width();
 const gameControlButton = document.querySelector(

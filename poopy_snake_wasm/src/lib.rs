@@ -14,10 +14,16 @@ pub enum Direction {
     Right,
 }
 
-#[wasm_bindgen(module = "/js/random.js")]
+#[wasm_bindgen]
 extern "C" {
-    fn random(max: usize) -> usize;
+    #[wasm_bindgen(js_namespace = Math)]
+    fn random() -> f32;
 }
+
+fn get_random_in_range(max: usize) -> usize {
+    (random() * (max as f32)) as usize
+}
+
 #[derive(Clone, PartialEq, Copy)]
 pub struct SnakeCell(usize);
 struct Snake {
@@ -165,7 +171,7 @@ impl World {
     fn generate_reward_cell(max: usize, snake_body: &Vec<SnakeCell>) -> Option<usize> {
         let mut reward_cell;
         loop {
-            reward_cell = random(max);
+            reward_cell = get_random_in_range(max);
             if !snake_body.contains(&SnakeCell(reward_cell)) {
                 break;
             }
