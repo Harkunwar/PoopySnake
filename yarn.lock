@@ -1137,6 +1137,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"poopy-snake@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "poopy-snake@workspace:."
+  dependencies:
+    typescript: ^4.9.4
+    vite: ^2.6.14
+    vite-plugin-top-level-await: ^1.2.2
+    vite-plugin-wasm-pack: ^0.1.9
+  languageName: unknown
+  linkType: soft
+
 "postcss@npm:^8.4.13":
   version: 8.4.20
   resolution: "postcss@npm:8.4.20"
@@ -1438,17 +1449,6 @@ __metadata:
   checksum: cd745d2dab872cce0a59858a0671052fbd7b444b47c2b0451d0774a44fa8181dbbfe05b52275c28a00e16afbd83c3765346a0cf5ada04d9616c5ff2f380c3003
   languageName: node
   linkType: hard
-
-"vite-plugin-wasm-pack-example@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "vite-plugin-wasm-pack-example@workspace:."
-  dependencies:
-    typescript: ^4.9.4
-    vite: ^2.6.14
-    vite-plugin-top-level-await: ^1.2.2
-    vite-plugin-wasm-pack: ^0.1.9
-  languageName: unknown
-  linkType: soft
 
 "vite-plugin-wasm-pack@npm:^0.1.9":
   version: 0.1.12
