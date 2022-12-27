@@ -11,7 +11,7 @@
   "scripts": {
     "build:wasm": "wasm-pack build ./poopy_snake_wasm --target web",
     "build:web": "vite build",
-    "cloudflare": "sh cloudflare.setup.sh && yarn build",
+    "cloudflare": "bash cloudflare.setup.sh && yarn build",
     "dev": "yarn build:wasm && vite"
   },
   "packageManager": "yarn@3.3.1"
