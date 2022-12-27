@@ -1,7 +1,6 @@
 {
-  "name": "vite-plugin-wasm-pack-example",
+  "name": "poopy-snake",
   "version": "1.0.0",
-  "main": "index.js",
   "license": "MIT",
   "devDependencies": {
     "typescript": "^4.9.4",
@@ -12,10 +11,7 @@
   "scripts": {
     "build:wasm": "wasm-pack build ./poopy_snake_wasm --target web",
     "build:web": "vite build",
-    "build": "yarn build:wasm && yarn build:web",
-    "install:rust": "curl https://sh.rustup.rs -sSf | sh -s -- -y",
-    "install:wasmpack": "PATH=\"$HOME/.cargo/bin:$PATH\" curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh",
-    "cloudflare": "yarn install:rust && yarn install:wasmpack && yarn build",
+    "cloudflare": "chmod u+x ./cloudflare.setup.sh && ./cloudflare.setup.sh && yarn build",
     "dev": "yarn build:wasm && vite"
   },
   "packageManager": "yarn@3.3.1"
