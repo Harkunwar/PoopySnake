@@ -13,7 +13,7 @@
     "build:wasm": "wasm-pack build ./poopy_snake_wasm --target web",
     "build:web": "vite build",
     "build": "yarn build:wasm && yarn build:web",
-    "install:rust": "curl https://sh.rustup.rs -sSf | sh -s -- -y",
+    "install:rust": "curl https://sh.rustup.rs -sSf | sh -s -- -y && . $HOME/.cargo/env",
     "install:wasmpack": "curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh",
     "cloudflare": "yarn install:rust && yarn install:wasmpack && yarn build",
     "dev": "yarn build:wasm && vite"
