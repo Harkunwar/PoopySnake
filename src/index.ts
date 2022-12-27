@@ -1,9 +1,11 @@
 import init, { World, Direction } from "poopy_snake_wasm";
+import { random } from "../poopy_snake_wasm/js/random";
 
 const { memory } = await init();
 const CELL_SIZE = 40;
 const WORLD_WIDTH = 8;
-const SNAKE_SPAWN_INDEX = Date.now() % (WORLD_WIDTH * WORLD_WIDTH);
+const WORLD_SIZE = WORLD_WIDTH * WORLD_WIDTH;
+const SNAKE_SPAWN_INDEX = random(WORLD_SIZE);
 const world = World.new(WORLD_WIDTH, SNAKE_SPAWN_INDEX);
 const worldWidth = world.get_width();
 const canvas = document.querySelector("canvas")!;
@@ -65,9 +67,21 @@ function drawSnake() {
   });
 }
 
+function drawReward() {
+  const rewardCellIndex = world.get_reward_cell();
+  const column = rewardCellIndex % worldWidth;
+  const row = Math.floor(rewardCellIndex / worldWidth);
+
+  context.beginPath();
+  context.fillStyle = "#ff0000";
+  context.fillRect(column * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+  context.stroke();
+}
+
 function paint() {
   drawWorld();
   drawSnake();
+  drawReward();
 }
 
 function update() {
