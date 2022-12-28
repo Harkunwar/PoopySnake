@@ -151,7 +151,6 @@ impl World {
     }
 
     pub fn step(&mut self) {
-        log("STARTED 1");
         match self.status {
             Some(GameStatus::Played) => {
                 let snake_length = self.get_snake_length();
@@ -159,7 +158,6 @@ impl World {
                     self.snake.body[i] = self.snake.body[i - 1]
                 }
 
-                log("STARTED 2");
                 if snake_length > 0 {
                     match self.next_cell {
                         Some(cell) => {
@@ -175,14 +173,11 @@ impl World {
                     }
                 }
 
-                log("STARTED 3");
                 if self.get_snake_length() == 0
                     || self.snake.body[1..snake_length].contains(&self.snake.body[0])
                 {
                     self.status = Some(GameStatus::Lost);
                 }
-
-                log("STARTED 4");
 
                 if self.reward_cell == self.get_snake_head_index() {
                     if self.get_snake_length() < self.size {
@@ -195,8 +190,6 @@ impl World {
 
                     self.snake.body.push(self.snake.body[1]);
                 }
-
-                log("STARTED 5");
 
                 self.iterations += 1;
 
@@ -212,8 +205,6 @@ impl World {
                     }
                     self.iterations = 0;
                 }
-
-                log("STARTED 6");
             }
             _ => {}
         }
