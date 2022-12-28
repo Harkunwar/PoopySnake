@@ -4,7 +4,7 @@ import wasmPack from "vite-plugin-wasm-pack";
 
 export default defineConfig({
   build: {
-    minify: false,
+    minify: "esbuild",
 
     commonjsOptions: {
       include: [/poopy_snake_wasm/, /node_modules/],
