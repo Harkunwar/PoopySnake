@@ -18,6 +18,9 @@ pub enum Direction {
 extern "C" {
     #[wasm_bindgen(js_namespace = Math)]
     fn random() -> f64;
+
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
 }
 
 fn get_random_in_range(max: usize) -> usize {
@@ -148,6 +151,7 @@ impl World {
     }
 
     pub fn step(&mut self) {
+        log("STARTED 1");
         match self.status {
             Some(GameStatus::Played) => {
                 let snake_length = self.get_snake_length();
@@ -155,21 +159,30 @@ impl World {
                     self.snake.body[i] = self.snake.body[i - 1]
                 }
 
-                match self.next_cell {
-                    Some(cell) => {
-                        self.snake.body[0] = cell;
-                        self.next_cell = None;
-                    }
-                    None => {
-                        self.snake.body[0] = self
-                            .generate_next_snake_cell(&self.snake.direction)
-                            .unwrap();
+                log("STARTED 2");
+                if snake_length > 0 {
+                    match self.next_cell {
+                        Some(cell) => {
+                            self.snake.body[0] = cell;
+                            self.next_cell = None;
+                        }
+                        None => {
+                            let next_cell = self.generate_next_snake_cell(&self.snake.direction);
+                            if next_cell != None {
+                                self.snake.body[0] = next_cell.unwrap();
+                            }
+                        }
                     }
                 }
 
-                if self.snake.body[1..snake_length].contains(&self.snake.body[0]) {
+                log("STARTED 3");
+                if self.get_snake_length() == 0
+                    || self.snake.body[1..snake_length].contains(&self.snake.body[0])
+                {
                     self.status = Some(GameStatus::Lost);
                 }
+
+                log("STARTED 4");
 
                 if self.reward_cell == self.get_snake_head_index() {
                     if self.get_snake_length() < self.size {
@@ -182,6 +195,8 @@ impl World {
 
                     self.snake.body.push(self.snake.body[1]);
                 }
+
+                log("STARTED 5");
 
                 self.iterations += 1;
 
@@ -197,6 +212,8 @@ impl World {
                     }
                     self.iterations = 0;
                 }
+
+                log("STARTED 6");
             }
             _ => {}
         }

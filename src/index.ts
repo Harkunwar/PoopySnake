@@ -145,7 +145,6 @@ function play() {
   const fps = 10;
   setTimeout(function () {
     context.clearRect(0, 0, canvas.width, canvas.height);
-    console.log({ poop_cell: world.get_poop_cell() });
     world.step();
     paint();
     requestAnimationFrame(play);
