@@ -19,4 +19,5 @@ export function initFavicon() {
   const headElement = document.querySelector("head")!;
   headElement.appendChild(faviconElement);
   faviconElement.href = image;
+  faviconCanvas.remove();
 }

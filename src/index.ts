@@ -3,14 +3,11 @@ import { initFavicon } from "./favicon";
 
 const { memory } = await init();
 const CELL_SIZE = 40;
-const WORLD_WIDTH = 8;
+const WORLD_WIDTH = 12;
 const WORLD_SIZE = WORLD_WIDTH * WORLD_WIDTH;
 const SNAKE_SPAWN_INDEX = Date.now() % WORLD_SIZE;
 const world = World.new(WORLD_WIDTH, SNAKE_SPAWN_INDEX);
 const worldWidth = world.get_width();
-const gameControlButton = document.querySelector(
-  "button#game-control-button",
-) as HTMLButtonElement;
 const gameStatus = document.getElementById("game-status") as HTMLDivElement;
 const pointsDiv = document.getElementById("points") as HTMLDivElement;
 const canvas = document.getElementById("snake-canvas") as HTMLCanvasElement;
@@ -18,10 +15,9 @@ const context = canvas.getContext("2d")!;
 canvas.height = worldWidth * CELL_SIZE;
 canvas.width = worldWidth * CELL_SIZE;
 
-gameControlButton.addEventListener("click", function () {
+canvas.addEventListener("click", function () {
   const status = world.get_game_status();
   if (status === undefined) {
-    gameControlButton.textContent = "Playing";
     world.start_game();
     play();
   } else {
@@ -77,7 +73,7 @@ function drawSnake() {
       const column = cellIndex % worldWidth;
       const row = Math.floor(cellIndex / worldWidth);
 
-      context.fillStyle = index == 0 ? "#7878db" : "#000000";
+      context.fillStyle = index == 0 ? "#00A8CC" : "#0C7B93";
 
       context.beginPath();
       context.fillRect(
@@ -127,6 +123,42 @@ function drawGameStatus() {
   pointsDiv.textContent = world.get_points().toString();
 }
 
+function drawWelcomeScreen() {
+  const center = (worldWidth * CELL_SIZE) / 2;
+
+  // define the arc path
+  context.beginPath();
+  context.arc(center, center, 100, 0, 2 * Math.PI, false);
+
+  // stroke it
+  const originalLineWidth = context.lineWidth;
+  context.lineWidth = 5;
+  context.stroke();
+  context.lineWidth = originalLineWidth;
+
+  // make alpha solid (the color doesn't matter)
+  context.fillStyle = "#ffffff";
+
+  // change composite mode and fill
+  context.globalCompositeOperation = "destination-out";
+  context.fill();
+
+  // reset composite mode to default
+  context.globalCompositeOperation = "source-over";
+
+  context.fillStyle = "#999999";
+  context.font = "20px sans-serif";
+
+  let textString = "Start Pooping!",
+    textWidth = context.measureText(textString).width;
+
+  context.fillText(
+    textString,
+    canvas.width / 2 - textWidth / 2,
+    canvas.height / 2 + 10,
+  );
+}
+
 function paint() {
   drawWorld();
   drawSnake();
@@ -138,10 +170,10 @@ function paint() {
 function play() {
   const status = world.get_game_status();
 
-  if (status === GameStatus.Won || status === GameStatus.Lost) {
-    gameControlButton.textContent = "Replay";
-    return;
-  }
+  // if (status === GameStatus.Won || status === GameStatus.Lost) {
+  //   gameControlButton.textContent = "Replay";
+  //   return;
+  // }
 
   const fps = 6;
   setTimeout(function () {
@@ -153,4 +185,5 @@ function play() {
 }
 
 paint();
+drawWelcomeScreen();
 initFavicon();
