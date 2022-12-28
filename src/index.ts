@@ -143,7 +143,7 @@ function play() {
     return;
   }
 
-  const fps = 10;
+  const fps = 6;
   setTimeout(function () {
     context.clearRect(0, 0, canvas.width, canvas.height);
     world.step();

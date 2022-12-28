@@ -80,7 +80,7 @@ impl World {
             size,
             reward_cell: World::generate_reward_cell(size, &snake.body),
             poop_cell: None,
-            poop_iterations: 30,
+            poop_iterations: 50,
             snake,
             iterations: 0,
             next_cell: None,
@@ -179,7 +179,7 @@ impl World {
                     self.status = Some(GameStatus::Lost);
                 }
 
-                if self.reward_cell == self.get_snake_head_index() {
+                if self.reward_cell != None && self.reward_cell == self.get_snake_head_index() {
                     if self.get_snake_length() < self.size {
                         self.points += 1;
                         self.reward_cell = World::generate_reward_cell(self.size, &self.snake.body);
@@ -188,7 +188,7 @@ impl World {
                         self.status = Some(GameStatus::Won);
                     }
 
-                    self.snake.body.push(self.snake.body[1]);
+                    self.snake.body.push(self.snake.body[0]);
                 }
 
                 self.iterations += 1;
