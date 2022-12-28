@@ -32,7 +32,7 @@ struct Snake {
 }
 
 #[wasm_bindgen]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum GameStatus {
     Won,
     Lost,
@@ -59,8 +59,11 @@ pub struct World {
     snake: Snake,
     next_cell: Option<SnakeCell>,
     reward_cell: Option<usize>,
+    poop_iterations: usize,
+    iterations: usize,
+    poop_cell: Option<usize>,
     status: Option<GameStatus>,
-    points: usize,
+    points: isize,
 }
 
 #[wasm_bindgen]
@@ -73,14 +76,17 @@ impl World {
             width,
             size,
             reward_cell: World::generate_reward_cell(size, &snake.body),
+            poop_cell: None,
+            poop_iterations: 30,
             snake,
+            iterations: 0,
             next_cell: None,
             status: None,
             points: 0,
         }
     }
 
-    pub fn get_points(&self) -> usize {
+    pub fn get_points(&self) -> isize {
         self.points
     }
 
@@ -88,16 +94,23 @@ impl World {
         self.width
     }
 
-    pub fn get_snake_head_index(&self) -> usize {
-        self.snake.body[0].0
+    pub fn get_snake_head_index(&self) -> Option<usize> {
+        if self.get_snake_length() > 0 {
+            Some(self.snake.body[0].0)
+        } else {
+            None
+        }
     }
 
     pub fn set_snake_direction(&mut self, direction: Direction) {
-        let next_cell = self.generate_next_snake_cell(&direction);
-        if self.snake.body[1] == next_cell {
+        if self.get_snake_length() == 0 {
             return;
         }
-        self.next_cell = Some(next_cell);
+        let next_cell = self.generate_next_snake_cell(&direction);
+        if self.get_snake_length() > 1 && Some(self.snake.body[1]) == next_cell {
+            return;
+        }
+        self.next_cell = next_cell;
         self.snake.direction = direction;
     }
 
@@ -111,6 +124,10 @@ impl World {
 
     pub fn get_reward_cell(&self) -> Option<usize> {
         self.reward_cell
+    }
+
+    pub fn get_poop_cell(&self) -> Option<usize> {
+        self.poop_cell
     }
 
     pub fn get_game_status(&self) -> Option<GameStatus> {
@@ -144,7 +161,9 @@ impl World {
                         self.next_cell = None;
                     }
                     None => {
-                        self.snake.body[0] = self.generate_next_snake_cell(&self.snake.direction);
+                        self.snake.body[0] = self
+                            .generate_next_snake_cell(&self.snake.direction)
+                            .unwrap();
                     }
                 }
 
@@ -152,7 +171,7 @@ impl World {
                     self.status = Some(GameStatus::Lost);
                 }
 
-                if self.reward_cell == Some(self.get_snake_head_index()) {
+                if self.reward_cell == self.get_snake_head_index() {
                     if self.get_snake_length() < self.size {
                         self.points += 1;
                         self.reward_cell = World::generate_reward_cell(self.size, &self.snake.body);
@@ -163,8 +182,32 @@ impl World {
 
                     self.snake.body.push(self.snake.body[1]);
                 }
+
+                self.iterations += 1;
+
+                if self.poop_cell != None && self.poop_cell == self.get_snake_head_index() {
+                    self.points -= 2;
+                    self.iterations = self.poop_iterations;
+                }
+
+                if self.iterations == self.poop_iterations {
+                    self.poop_cell = self.generate_poop();
+                    if self.poop_cell == None {
+                        self.status = Some(GameStatus::Lost);
+                    }
+                    self.iterations = 0;
+                }
             }
             _ => {}
+        }
+    }
+
+    fn generate_poop(&mut self) -> Option<usize> {
+        self.snake.body.pop();
+        let poop_cell_option = self.snake.body.pop();
+        match poop_cell_option {
+            Some(cell) => Some(cell.0),
+            None => None,
         }
     }
 
@@ -179,11 +222,15 @@ impl World {
         Some(reward_cell)
     }
 
-    fn generate_next_snake_cell(&self, direction: &Direction) -> SnakeCell {
-        let snake_index = self.get_snake_head_index();
+    fn generate_next_snake_cell(&self, direction: &Direction) -> Option<SnakeCell> {
+        if self.get_snake_length() == 0 {
+            return None;
+        }
+        let snake_index = self.get_snake_head_index().unwrap();
+
         let row = snake_index / self.width;
 
-        match direction {
+        let next_cell = match direction {
             Direction::Right => {
                 let threshold = (row + 1) * self.width;
                 if snake_index + 1 == threshold {
@@ -216,6 +263,7 @@ impl World {
                     SnakeCell(snake_index + self.width)
                 }
             }
-        }
+        };
+        Some(next_cell)
     }
 }

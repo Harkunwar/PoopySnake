@@ -89,6 +89,18 @@ function drawSnake() {
     });
 }
 
+function drawEmoji(emoji, row, column) {
+  context.beginPath();
+  context.font = context.font.replace(/\d+px/, `${CELL_SIZE}px`);
+  context.fillText(
+    emoji,
+    column * CELL_SIZE,
+    row * CELL_SIZE + CELL_SIZE,
+    CELL_SIZE,
+  );
+  context.stroke();
+}
+
 function drawReward() {
   const rewardCellIndex = world.get_reward_cell();
   if (rewardCellIndex === undefined) {
@@ -96,11 +108,17 @@ function drawReward() {
   }
   const column = rewardCellIndex % worldWidth;
   const row = Math.floor(rewardCellIndex / worldWidth);
+  drawEmoji("🐀", row, column);
+}
 
-  context.beginPath();
-  context.fillStyle = "#ff0000";
-  context.fillRect(column * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-  context.stroke();
+function drawPoop() {
+  const poopCellIndex = world.get_poop_cell();
+  if (poopCellIndex === undefined) {
+    return;
+  }
+  const column = poopCellIndex % worldWidth;
+  const row = Math.floor(poopCellIndex / worldWidth);
+  drawEmoji("💩", row, column);
 }
 
 function drawGameStatus() {
@@ -112,6 +130,7 @@ function paint() {
   drawWorld();
   drawSnake();
   drawReward();
+  drawPoop();
   drawGameStatus();
 }
 
@@ -125,7 +144,8 @@ function play() {
 
   const fps = 10;
   setTimeout(function () {
-    context.clearRect(0, 0, canvas?.width ?? 0, canvas?.height ?? 0);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    console.log({ poop_cell: world.get_poop_cell() });
     world.step();
     paint();
     requestAnimationFrame(play);
