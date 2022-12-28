@@ -8,11 +8,9 @@ const WORLD_SIZE = WORLD_WIDTH * WORLD_WIDTH;
 const SNAKE_SPAWN_INDEX = Date.now() % WORLD_SIZE;
 const world = World.new(WORLD_WIDTH, SNAKE_SPAWN_INDEX);
 const worldWidth = world.get_width();
-const gameStatus = document.getElementById("game-status") as HTMLDivElement;
-const pointsDiv = document.getElementById("points") as HTMLDivElement;
 const canvas = document.getElementById("snake-canvas") as HTMLCanvasElement;
 const context = canvas.getContext("2d")!;
-canvas.height = worldWidth * CELL_SIZE;
+canvas.height = worldWidth * CELL_SIZE + 4 * CELL_SIZE;
 canvas.width = worldWidth * CELL_SIZE;
 
 canvas.addEventListener("click", function () {
@@ -118,11 +116,6 @@ function drawPoop() {
   drawEmoji("💩", row, column);
 }
 
-function drawGameStatus() {
-  gameStatus.textContent = world.get_game_status_text();
-  pointsDiv.textContent = world.get_points().toString();
-}
-
 function drawWelcomeScreen() {
   const center = (worldWidth * CELL_SIZE) / 2;
 
@@ -155,7 +148,7 @@ function drawWelcomeScreen() {
   context.fillText(
     textString,
     canvas.width / 2 - textWidth / 2,
-    canvas.height / 2 - 10,
+    canvas.width / 2 - 10,
   );
 
   context.font = "20px sans-serif";
@@ -166,7 +159,22 @@ function drawWelcomeScreen() {
   context.fillText(
     textString,
     canvas.width / 2 - textWidth / 2,
-    canvas.height / 2 + 20,
+    canvas.width / 2 + 20,
+  );
+}
+
+function drawPoints() {
+  const points = world.get_points();
+  context.fillStyle = "#00A8CC";
+  context.font = "25px sans-serif";
+
+  const textString = `Points: ${points}`;
+  const textWidth = context.measureText(textString).width;
+
+  context.fillText(
+    textString,
+    canvas.width / 2 - textWidth / 2,
+    canvas.height - 40,
   );
 }
 
@@ -175,16 +183,15 @@ function paint() {
   drawSnake();
   drawReward();
   drawPoop();
-  drawGameStatus();
+  drawPoints();
 }
 
 function play() {
   const status = world.get_game_status();
 
-  // if (status === GameStatus.Won || status === GameStatus.Lost) {
-  //   gameControlButton.textContent = "Replay";
-  //   return;
-  // }
+  if (status === GameStatus.Won || status === GameStatus.Lost) {
+    return;
+  }
 
   const fps = 6;
   setTimeout(function () {
