@@ -88,11 +88,11 @@ function drawSnake() {
 
 function drawEmoji(emoji, row, column) {
   context.beginPath();
-  context.font = context.font.replace(/\d+px/, `${CELL_SIZE}px`);
+  context.font = context.font.replace(/\d+px/, `${CELL_SIZE * 0.8}px`);
   context.fillText(
     emoji,
-    column * CELL_SIZE,
-    row * CELL_SIZE + CELL_SIZE,
+    column * CELL_SIZE + 5,
+    row * CELL_SIZE + CELL_SIZE - 10,
     CELL_SIZE,
   );
   context.stroke();
@@ -146,16 +146,27 @@ function drawWelcomeScreen() {
   // reset composite mode to default
   context.globalCompositeOperation = "source-over";
 
-  context.fillStyle = "#999999";
-  context.font = "20px sans-serif";
+  context.fillStyle = "#00A8CC";
+  context.font = "25px sans-serif";
 
-  let textString = "Start Pooping!",
+  let textString = "Poopy Snake",
     textWidth = context.measureText(textString).width;
 
   context.fillText(
     textString,
     canvas.width / 2 - textWidth / 2,
-    canvas.height / 2 + 10,
+    canvas.height / 2 - 10,
+  );
+
+  context.font = "20px sans-serif";
+
+  (textString = "Start Pooping!"),
+    (textWidth = context.measureText(textString).width);
+
+  context.fillText(
+    textString,
+    canvas.width / 2 - textWidth / 2,
+    canvas.height / 2 + 20,
   );
 }
 
