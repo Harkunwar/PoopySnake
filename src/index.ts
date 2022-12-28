@@ -1,4 +1,5 @@
 import init, { World, Direction, GameStatus } from "poopy_snake_wasm";
+import { initFavicon } from "./favicon";
 
 const { memory } = await init();
 const CELL_SIZE = 40;
@@ -12,7 +13,7 @@ const gameControlButton = document.querySelector(
 ) as HTMLButtonElement;
 const gameStatus = document.getElementById("game-status") as HTMLDivElement;
 const pointsDiv = document.getElementById("points") as HTMLDivElement;
-const canvas = document.querySelector("canvas")!;
+const canvas = document.getElementById("snake-canvas") as HTMLCanvasElement;
 const context = canvas.getContext("2d")!;
 canvas.height = worldWidth * CELL_SIZE;
 canvas.width = worldWidth * CELL_SIZE;
@@ -152,3 +153,4 @@ function play() {
 }
 
 paint();
+initFavicon();
